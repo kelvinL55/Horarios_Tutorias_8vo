@@ -87,6 +87,36 @@
                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 transition-colors">{{ horario.notas|default:'' }}</textarea>
         </div>
 
+        <div>
+            <label for="url_curso" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">URL del Curso (Opcional)</label>
+            <input type="url" 
+                   name="url_curso" 
+                   id="url_curso" 
+                   value="{{ horario.url_curso|default:'' }}"
+                   placeholder="https://..." 
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 transition-colors" />
+        </div>
+
+        <div>
+            <label for="ruta_local" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ruta Local (Opcional)</label>
+            <input type="text" 
+                   name="ruta_local" 
+                   id="ruta_local" 
+                   value="{{ horario.ruta_local|default:'' }}"
+                   placeholder="C:\\ruta\\a\\la\\carpeta" 
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 transition-colors" />
+        </div>
+
+        <div>
+            <label for="url_zoom" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">URL de Zoom (Opcional)</label>
+            <input type="url" 
+                   name="url_zoom" 
+                   id="url_zoom" 
+                   value="{{ horario.url_zoom|default:'' }}"
+                   placeholder="https://utpl.zoom.us/j/..." 
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 transition-colors" />
+        </div>
+
         <div class="flex justify-end space-x-4 pt-4">
             <button type="submit"
                     class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:focus:ring-indigo-400">

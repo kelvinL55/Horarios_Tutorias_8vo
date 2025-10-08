@@ -56,12 +56,20 @@
         <!-- Iteración sobre cada horario del día -->
         {% for horario in dia.horariotutoria_set.all %}
         <!-- Tarjeta para cada horario con estilos adaptados al modo oscuro/claro -->
-        <div class="bg-[#e7eafe] dark:bg-indigo-900 rounded-lg p-4 mb-4 last:mb-0 transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] hover:bg-indigo-100 dark:hover:bg-indigo-800 relative cursor-pointer horario-card" data-horario-id="{{ horario.id }}" data-materia="{{ horario.materia }}" data-paralelo="{{ horario.paralelo|default:'' }}" data-hora-inicio="{{ horario.hora_inicio|time:'H:i' }}" data-hora-fin="{{ horario.hora_fin|time:'H:i' }}" data-notas="{{ horario.notas|default:'' }}" data-url-curso="{{ horario.url_curso|default:'' }}" data-ruta-local="{{ horario.ruta_local|default:'' }}">
+        <div class="bg-[#e7eafe] dark:bg-indigo-900 rounded-lg p-4 mb-4 last:mb-0 transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] hover:bg-indigo-100 dark:hover:bg-indigo-800 relative cursor-pointer horario-card" data-horario-id="{{ horario.id }}" data-materia="{{ horario.materia }}" data-paralelo="{{ horario.paralelo|default:'' }}" data-hora-inicio="{{ horario.hora_inicio|time:'H:i' }}" data-hora-fin="{{ horario.hora_fin|time:'H:i' }}" data-notas="{{ horario.notas|default:'' }}" data-url-curso="{{ horario.url_curso|default:'' }}" data-ruta-local="{{ horario.ruta_local|default:'' }}" data-url-zoom="{{ horario.url_zoom|default:'' }}">
           <!-- Botón para abrir la ruta local (centro derecho) -->
           {% if horario.ruta_local %}
           <a href="file:///{{ horario.ruta_local|urlencode }}" class="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-800 text-white rounded-full p-2 shadow transition-colors btn-ruta-local z-20 flex items-center justify-center" title="Abrir carpeta local" onclick="event.stopPropagation(); return abrirRutaLocal('{{ horario.ruta_local|escapejs }}', this);">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7l9-5 9 5" />
+            </svg>
+          </a>
+          {% endif %}
+          <!-- Botón para abrir Zoom (centro derecho, debajo del botón de carpeta) -->
+          {% if horario.url_zoom %}
+          <a href="{{ horario.url_zoom }}" target="_blank" class="absolute right-2 top-1/2 translate-y-6 bg-blue-600 hover:bg-blue-800 text-white rounded-full p-2 shadow transition-colors btn-zoom z-20 flex items-center justify-center" title="Unirse a Zoom" onclick="event.stopPropagation();">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16c-.169 0-.333.034-.491.099-.157.065-.3.157-.428.276-.128.119-.23.26-.306.424-.076.164-.114.34-.114.528v6.128c0 .188.038.364.114.528.076.164.178.305.306.424.128.119.271.211.428.276.158.065.322.099.491.099.188 0 .364-.034.528-.099.164-.065.305-.157.424-.276.119-.128.211-.271.276-.428.065-.158.099-.322.099-.491V9.488c0-.188-.034-.364-.099-.528-.065-.164-.157-.305-.276-.424-.119-.128-.26-.23-.424-.306-.164-.076-.34-.114-.528-.114zM6.432 8.16c-.188 0-.364.034-.528.099-.164.065-.305.157-.424.276-.119.128-.211.271-.276.428-.065.158-.099.322-.099.491v6.128c0 .188.034.364.099.528.065.164.157.305.276.424.119.128.26.23.424.306.164.076.34.114.528.114.169 0 .333-.034.491-.099.158-.065.3-.157.428-.276.128-.119.23-.26.306-.424.076-.164.114-.34.114-.528V9.488c0-.188-.038-.364-.114-.528-.076-.164-.178-.305-.306-.424-.128-.119-.271-.211-.428-.276-.158-.065-.322-.099-.491-.099z" />
             </svg>
           </a>
           {% endif %}
@@ -134,6 +142,8 @@
       <input type="url" id="modal-url-input" name="url_curso" placeholder="https://..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 transition-colors" />
       <label for="modal-ruta-local-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 mt-4">Ruta Local (ej: C:\\Users\\Kelvin\\...)</label>
       <input type="text" id="modal-ruta-local-input" name="ruta_local" placeholder="C:\\ruta\\a\\la\\carpeta" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 transition-colors" />
+      <label for="modal-url-zoom-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 mt-4">URL de Zoom</label>
+      <input type="url" id="modal-url-zoom-input" name="url_zoom" placeholder="https://utpl.zoom.us/j/..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 transition-colors" />
       <input type="hidden" id="modal-horario-id" name="horario_id" />
       <button type="submit" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-800 transition-colors">Guardar</button>
     </form>
@@ -172,6 +182,7 @@
       document.getElementById("modal-notas").textContent = card.dataset.notas;
       document.getElementById("modal-url-input").value = card.dataset.urlCurso;
       document.getElementById("modal-ruta-local-input").value = card.dataset.rutaLocal;
+      document.getElementById("modal-url-zoom-input").value = card.dataset.urlZoom;
       document.getElementById("modal-horario-id").value = card.dataset.horarioId;
       mensaje.textContent = "";
       modal.classList.remove("hidden");
@@ -188,6 +199,7 @@
     const horarioId = document.getElementById("modal-horario-id").value;
     const urlCurso = document.getElementById("modal-url-input").value;
     const rutaLocal = document.getElementById("modal-ruta-local-input").value;
+    const urlZoom = document.getElementById("modal-url-zoom-input").value;
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
     fetch("{% url 'horarios:actualizar_datos_horario' %}", {
       method: "POST",
@@ -196,7 +208,7 @@
         "Content-Type": "application/x-www-form-urlencoded",
         ...(csrfToken ? { "X-CSRFToken": csrfToken } : {}),
       },
-      body: `horario_id=${horarioId}&url_curso=${encodeURIComponent(urlCurso)}&ruta_local=${encodeURIComponent(rutaLocal)}`,
+      body: `horario_id=${horarioId}&url_curso=${encodeURIComponent(urlCurso)}&ruta_local=${encodeURIComponent(rutaLocal)}&url_zoom=${encodeURIComponent(urlZoom)}`,
     })
       .then((response) => response.json())
       .then((data) => {
@@ -208,6 +220,7 @@
           if (card) {
             card.dataset.urlCurso = urlCurso;
             card.dataset.rutaLocal = rutaLocal;
+            card.dataset.urlZoom = urlZoom;
             // Actualizar o crear el texto/enlace de la URL
             let urlP = card.querySelector(".url-curso-text");
             if (!urlP && urlCurso) {
@@ -261,6 +274,24 @@
               btnRuta.href = `file:///${encodeURIComponent(rutaLocal)}`;
             } else if (btnRuta && !rutaLocal) {
               btnRuta.remove();
+            }
+            // Botón Zoom
+            let btnZoom = card.querySelector(".btn-zoom");
+            if (urlZoom && !btnZoom) {
+              btnZoom = document.createElement("a");
+              btnZoom.href = urlZoom;
+              btnZoom.target = "_blank";
+              btnZoom.className = "absolute right-2 top-1/2 translate-y-6 bg-blue-600 hover:bg-blue-800 text-white rounded-full p-2 shadow transition-colors btn-zoom z-20 flex items-center justify-center";
+              btnZoom.title = "Unirse a Zoom";
+              btnZoom.innerHTML = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16c-.169 0-.333.034-.491.099-.157.065-.3.157-.428.276-.128.119-.23.26-.306.424-.076.164-.114.34-.114.528v6.128c0 .188.038.364.114.528.076.164.178.305.306.424.128.119.271.211.428.276.158.065.322.099.491.099.188 0 .364-.034.528-.099.164-.065.305-.157.424-.276.119-.128.211-.271.276-.428.065-.158.099-.322.099-.491V9.488c0-.188-.034-.364-.099-.528-.065-.164-.157-.305-.276-.424-.119-.128-.26-.23-.424-.306-.164-.076-.34-.114-.528-.114zM6.432 8.16c-.188 0-.364.034-.528.099-.164.065-.305.157-.424.276-.119.128-.211.271-.276.428-.065.158-.099.322-.099.491v6.128c0 .188.034.364.099.528.065.164.157.305.276.424.119.128.26.23.424.306.164.076.34.114.528.114.169 0 .333-.034.491-.099.158-.065.3-.157.428-.276.128-.119.23-.26.306-.424.076-.164.114-.34.114-.528V9.488c0-.188-.038-.364-.114-.528-.076-.164-.178-.305-.306-.424-.128-.119-.271-.211-.428-.276-.158-.065-.322-.099-.491-.099z"/></svg>`;
+              btnZoom.onclick = function (e) {
+                e.stopPropagation();
+              };
+              card.appendChild(btnZoom);
+            } else if (btnZoom && urlZoom) {
+              btnZoom.href = urlZoom;
+            } else if (btnZoom && !urlZoom) {
+              btnZoom.remove();
             }
           }
           setTimeout(() => {

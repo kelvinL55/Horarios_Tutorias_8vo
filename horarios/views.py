@@ -74,6 +74,9 @@ def agregar_horario(request):
         hora_inicio = request.POST.get('hora_inicio')
         hora_fin = request.POST.get('hora_fin')
         notas = request.POST.get('notas')
+        url_curso = request.POST.get('url_curso', '')
+        ruta_local = request.POST.get('ruta_local', '')
+        url_zoom = request.POST.get('url_zoom', '')
         
         try:
             dia = DiaSemana.objects.get(id=dia_id)
@@ -83,7 +86,10 @@ def agregar_horario(request):
                 dia=dia,
                 hora_inicio=hora_inicio,
                 hora_fin=hora_fin,
-                notas=notas
+                notas=notas,
+                url_curso=url_curso,
+                ruta_local=ruta_local,
+                url_zoom=url_zoom
             )
             messages.success(request, 'Horario agregado exitosamente.')
             return redirect('horarios:lista_horarios')
@@ -106,6 +112,9 @@ def editar_horario(request, horario_id):
         horario.hora_inicio = request.POST.get('hora_inicio')
         horario.hora_fin = request.POST.get('hora_fin')
         horario.notas = request.POST.get('notas')
+        horario.url_curso = request.POST.get('url_curso', '')
+        horario.ruta_local = request.POST.get('ruta_local', '')
+        horario.url_zoom = request.POST.get('url_zoom', '')
         
         try:
             horario.save()
@@ -138,17 +147,18 @@ def actualizar_datos_horario(request):
         horario_id = request.POST.get('horario_id')
         url_curso = request.POST.get('url_curso', '').strip()
         ruta_local = request.POST.get('ruta_local', '').strip()
+        url_zoom = request.POST.get('url_zoom', '').strip()
         try:
             horario = HorarioTutoria.objects.get(id=horario_id)
-            if 'url_curso' in request.POST:
-                horario.url_curso = url_curso
-            if 'ruta_local' in request.POST:
-                horario.ruta_local = ruta_local
+            horario.url_curso = url_curso
+            horario.ruta_local = ruta_local
+            horario.url_zoom = url_zoom
             horario.save()
             return JsonResponse({
                 'success': True,
                 'url_curso': horario.url_curso,
-                'ruta_local': horario.ruta_local
+                'ruta_local': horario.ruta_local,
+                'url_zoom': horario.url_zoom
             })
         except HorarioTutoria.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Horario no encontrado.'})
