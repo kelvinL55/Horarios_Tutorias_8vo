@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-(q8lwa2u9#es^hb=%-$r391zev
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # ALLOWED_HOSTS dinámico para desarrollo y producción
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,app-tutorias-7mo.onrender.com").split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,horarios-tutorias-8vo.onrender.com").split(",")
 
 
 INSTALLED_APPS = [
