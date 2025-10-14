@@ -51,7 +51,8 @@
         </div>
       </div>
     </header>
-    <main class="container mx-auto p-2 flex-grow">
+    <!-- main ahora ocupa todo el ancho para que las vistas puedan distribuir contenido a lo largo de la página -->
+    <main class="w-full p-2 flex-grow">
       {% if messages %}
       <div class="mb-4">
         {% for message in messages %}

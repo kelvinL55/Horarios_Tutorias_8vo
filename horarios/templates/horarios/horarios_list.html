@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block content %}
-<!-- Contenedor principal con espaciado y padding -->
-<div class="container mx-auto px-2 py-0">
+<!-- Contenedor principal ahora ocupa todo el ancho para distribuir mejor las cards -->
+<div class="max-w-full mx-auto px-2 py-0">
   <!-- Encabezado con título y botón de agregar -->
   <div class="flex justify-between items-center mb-4">
     <!-- Título principal con estilo y colores adaptados al modo oscuro/claro -->
@@ -15,8 +15,8 @@
     </a>
   </div>
 
-  <!-- Grid responsivo: 1 columna en móvil, 5 columnas en pantallas medianas -->
-  <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+  <!-- Grid responsivo: columnas adaptativas para dar más espacio a las cards y hacerlas más grandes -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 gap-3">
     <!-- Iteración sobre cada día de la semana -->
     {% for dia in dias_semana %}
     <!-- Tarjeta para cada día con estilos adaptados al modo oscuro/claro -->
@@ -56,7 +56,7 @@
         <!-- Iteración sobre cada horario del día -->
         {% for horario in dia.horariotutoria_set.all %}
         <!-- Tarjeta para cada horario con estilos adaptados al modo oscuro/claro -->
-        <div class="bg-[#e7eafe] dark:bg-indigo-900 rounded-lg p-4 mb-4 last:mb-0 transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] hover:bg-indigo-100 dark:hover:bg-indigo-800 relative cursor-pointer horario-card" data-horario-id="{{ horario.id }}" data-materia="{{ horario.materia }}" data-paralelo="{{ horario.paralelo|default:'' }}" data-hora-inicio="{{ horario.hora_inicio|time:'H:i' }}" data-hora-fin="{{ horario.hora_fin|time:'H:i' }}" data-notas="{{ horario.notas|default:'' }}" data-url-curso="{{ horario.url_curso|default:'' }}" data-ruta-local="{{ horario.ruta_local|default:'' }}" data-url-zoom="{{ horario.url_zoom|default:'' }}">
+        <div class="bg-[#e7eafe] dark:bg-indigo-900 rounded-lg p-5 mb-4 last:mb-0 transition-all duration-300 hover:shadow-2xl hover:scale-[1.03] hover:bg-indigo-100 dark:hover:bg-indigo-800 relative cursor-pointer horario-card min-h-[120px]" data-horario-id="{{ horario.id }}" data-materia="{{ horario.materia }}" data-paralelo="{{ horario.paralelo|default:'' }}" data-hora-inicio="{{ horario.hora_inicio|time:'H:i' }}" data-hora-fin="{{ horario.hora_fin|time:'H:i' }}" data-notas="{{ horario.notas|default:'' }}" data-url-curso="{{ horario.url_curso|default:'' }}" data-ruta-local="{{ horario.ruta_local|default:'' }}" data-url-zoom="{{ horario.url_zoom|default:'' }}">
           <!-- Botón para abrir la ruta local (centro derecho) -->
           {% if horario.ruta_local %}
           <a href="file:///{{ horario.ruta_local|urlencode }}" class="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-800 text-white rounded-full p-2 shadow transition-colors btn-ruta-local z-20 flex items-center justify-center" title="Abrir carpeta local" onclick="event.stopPropagation(); return abrirRutaLocal('{{ horario.ruta_local|escapejs }}', this);">
@@ -74,7 +74,8 @@
           </a>
           {% endif %}
           <!-- Encabezado de la tarjeta con título y botones de acción -->
-          <div class="flex justify-between items-center mb-4 pointer-events-none">
+          <!-- Eliminamos pointer-events-none para que los botones reciban eventos normalmente; el listener de la card ignorará clicks en elementos interactivos -->
+          <div class="flex justify-between items-center mb-4">
             <div class="flex items-center space-x-2">
               <h3 class="font-medium text-gray-900 dark:text-gray-100">{{ horario.materia }}</h3>
             </div>
@@ -175,7 +176,11 @@
   const mensaje = document.getElementById("modal-mensaje");
 
   cards.forEach((card) => {
-    card.addEventListener("click", function () {
+    card.addEventListener("click", function (e) {
+      // Ignorar clicks que provengan de controles interactivos dentro de la card
+      if (e.target.closest("a, button, input, form, select, textarea, .btn-comentarios, .btn-url-curso, .btn-zoom, .btn-ruta-local")) {
+        return;
+      }
       document.getElementById("modal-materia").textContent = card.dataset.materia;
       document.getElementById("modal-paralelo").textContent = card.dataset.paralelo;
       document.getElementById("modal-hora").textContent = card.dataset.horaInicio + " - " + card.dataset.horaFin;
@@ -349,6 +354,8 @@
 
   btnsComentarios.forEach((btn) => {
     btn.addEventListener("click", function (e) {
+      // Evitar que el click del botón dispare el click de la card
+      e.stopPropagation();
       horarioIdActual = btn.dataset.horarioId;
       cargarComentarios(horarioIdActual);
       comentarioTexto.value = "";
