@@ -167,6 +167,31 @@
   </div>
 </div>
 
+<!-- Modal de confirmación para copia de ruta local -->
+<div id="modal-copia-ruta" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+  <div class="bg-white dark:bg-dark-card rounded-lg shadow-2xl p-8 w-full max-w-md relative">
+    <div class="text-center">
+      <!-- Ícono de éxito -->
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 mb-4">
+        <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <!-- Título del modal -->
+      <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">¡Ruta copiada exitosamente!</h3>
+      <!-- Mensaje descriptivo -->
+      <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">La ruta local ha sido copiada al portapapeles. Puedes pegarla en el explorador de archivos.</p>
+      <!-- Ruta copiada (opcional, para mostrar qué se copió) -->
+      <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 mb-6">
+        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Ruta copiada:</p>
+        <p id="ruta-copiada-texto" class="text-sm text-gray-800 dark:text-gray-200 font-mono break-all"></p>
+      </div>
+      <!-- Botón de confirmación -->
+      <button id="cerrar-modal-copia-ruta" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">Entendido</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // Abrir modal al hacer click en la card
   const cards = document.querySelectorAll(".horario-card");
@@ -325,17 +350,35 @@
     const url = `file:///${ruta.replace(/\\/g, "/")}`;
     // Probar si el navegador permite abrirla
     window.open(url, "_blank");
-    // Intentar copiar al portapapeles por si no funciona
+
+    // Intentar copiar al portapapeles y mostrar modal de confirmación
     setTimeout(() => {
       if (!window.navigator.userAgent.includes("Electron")) {
-        navigator.clipboard.writeText(ruta).then(() => {
-          el.title = "Ruta copiada al portapapeles";
-          el.classList.add("ring", "ring-green-400");
-          setTimeout(() => {
-            el.title = "Abrir carpeta local";
-            el.classList.remove("ring", "ring-green-400");
-          }, 1500);
-        });
+        navigator.clipboard
+          .writeText(ruta)
+          .then(() => {
+            // Mostrar la ruta copiada en el modal
+            document.getElementById("ruta-copiada-texto").textContent = ruta;
+            // Mostrar el modal de confirmación
+            document.getElementById("modal-copia-ruta").classList.remove("hidden");
+
+            // Efecto visual en el botón
+            el.title = "Ruta copiada al portapapeles";
+            el.classList.add("ring", "ring-green-400");
+            setTimeout(() => {
+              el.title = "Abrir carpeta local";
+              el.classList.remove("ring", "ring-green-400");
+            }, 1500);
+          })
+          .catch(() => {
+            // Si falla la copia, mostrar mensaje de error
+            document.getElementById("ruta-copiada-texto").textContent = "Error al copiar la ruta";
+            document.getElementById("modal-copia-ruta").classList.remove("hidden");
+          });
+      } else {
+        // Para aplicaciones Electron, solo mostrar el modal sin copiar
+        document.getElementById("ruta-copiada-texto").textContent = ruta;
+        document.getElementById("modal-copia-ruta").classList.remove("hidden");
       }
     }, 500);
     return false;
@@ -372,6 +415,20 @@
   modalComentarios.addEventListener("click", function (e) {
     if (e.target === modalComentarios) {
       modalComentarios.classList.add("hidden");
+    }
+  });
+
+  // --- Modal de confirmación de copia de ruta ---
+  const modalCopiaRuta = document.getElementById("modal-copia-ruta");
+  const cerrarModalCopiaRuta = document.getElementById("cerrar-modal-copia-ruta");
+
+  cerrarModalCopiaRuta.addEventListener("click", function () {
+    modalCopiaRuta.classList.add("hidden");
+  });
+
+  modalCopiaRuta.addEventListener("click", function (e) {
+    if (e.target === modalCopiaRuta) {
+      modalCopiaRuta.classList.add("hidden");
     }
   });
 
